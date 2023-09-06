@@ -1,17 +1,13 @@
-// Ignoring the import-export since the rest of the codebase uses imports and exports and changing would
-// break other code
-/* eslint-disable import/no-import-module-exports */
-
 // The next line calls a function in a module that has not been updated to TS yet
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 import db from '../database';
 import plugins from '../plugins';
 
 interface PostHandlerType {
-    bookmark: (pid: number, uid: string) => Promise<ToggleBookmarkResult>;
-    unbookmark: (pid: number, uid: string) => Promise<ToggleBookmarkResult>;
+    bookmark: (pid: number, uid: number) => Promise<ToggleBookmarkResult>;
+    unbookmark: (pid: number, uid: number) => Promise<ToggleBookmarkResult>;
     getPostFields: (pid: number, field: string[]) => Promise<PostData>;
-    hasBookmarked: (pid: NumberOrNumberArr, uid: string) => Promise<BoolOrBoolArr>;
+    hasBookmarked: (pid: NumberOrNumberArr, uid: number) => Promise<BoolOrBoolArr>;
     setPostField: (pid: number, field: string, data: NumberOrNumberArr) => Promise<void>;
 }
 
@@ -29,9 +25,9 @@ interface ToggleBookmarkResult {
 type BoolOrBoolArr = boolean | boolean[]
 type NumberOrNumberArr = number | number[]
 
-module.exports = function (Posts: PostHandlerType) {
-    async function toggleBookmark(type: string, pid: number, uid: string):Promise<ToggleBookmarkResult> {
-        if (parseInt(uid, 10) <= 0) {
+export = function (Posts: PostHandlerType) {
+    async function toggleBookmark(type: string, pid: number, uid: number):Promise<ToggleBookmarkResult> {
+        if (parseInt(String(uid), 10) <= 0) {
             throw new Error('[[error:not-logged-in]]');
         }
 
@@ -80,16 +76,16 @@ module.exports = function (Posts: PostHandlerType) {
         };
     }
 
-    Posts.bookmark = async function (pid: number, uid: string) {
+    Posts.bookmark = async function (pid: number, uid: number) {
         return await toggleBookmark('bookmark', pid, uid);
     };
 
-    Posts.unbookmark = async function (pid: number, uid: string) {
+    Posts.unbookmark = async function (pid: number, uid: number) {
         return await toggleBookmark('unbookmark', pid, uid);
     };
 
     Posts.hasBookmarked = async function (pid, uid): Promise<BoolOrBoolArr> {
-        if (parseInt(uid, 10) <= 0) {
+        if (parseInt(String(uid), 10) <= 0) {
             return Array.isArray(pid) ? pid.map(() => false) : false;
         }
 
@@ -103,4 +99,4 @@ module.exports = function (Posts: PostHandlerType) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
         return await db.isSetMember(`pid:${pid}:users_bookmarked`, uid); // eslint-disable-line @typescript-eslint/no-unsafe-return
     };
-};
+}

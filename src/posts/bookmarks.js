@@ -1,7 +1,4 @@
 "use strict";
-// Ignoring the import-export since the rest of the codebase uses imports and exports and changing would
-// break other code
-/* eslint-disable import/no-import-module-exports */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -14,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+
 // The next line calls a function in a module that has not been updated to TS yet
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
 const database_1 = __importDefault(require("../database"));
@@ -22,7 +19,8 @@ const plugins_1 = __importDefault(require("../plugins"));
 module.exports = function (Posts) {
     function toggleBookmark(type, pid, uid) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (parseInt(uid, 10) <= 0) {
+
+            if (parseInt(String(uid), 10) <= 0) {
                 throw new Error('[[error:not-logged-in]]');
             }
             const isBookmarking = type === 'bookmark';
@@ -77,7 +75,8 @@ module.exports = function (Posts) {
     };
     Posts.hasBookmarked = function (pid, uid) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (parseInt(uid, 10) <= 0) {
+
+            if (parseInt(String(uid), 10) <= 0) {
                 return Array.isArray(pid) ? pid.map(() => false) : false;
             }
             if (Array.isArray(pid)) {
